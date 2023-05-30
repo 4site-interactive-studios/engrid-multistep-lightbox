@@ -200,7 +200,7 @@ export class DonationLightbox {
                   <div id="bunnyAnimation"></div>
                 </div>
                 <div class="frame frame3">
-                  <h2 class="name">Fernando,</h2>
+                  <h2 class="name">Friend,</h2>
                   <h2 class="phrase">you are a hero <br>to animals.</h2>
                 </div>
               </div>
@@ -405,12 +405,11 @@ export class DonationLightbox {
             ? ""
             : this.donationinfo.frequency;
         let iFrameUrl = new URL(document.getElementById("dl-iframe").src);
-        for (const key in this.donationinfo) {
-          iFrameUrl.searchParams.append(key, this.donationinfo[key]);
-        }
-        document.getElementById("dl-iframe").src = iFrameUrl
-          .toString()
-          .replace("/donate/1", "/donate/2");
+        // for (const key in this.donationinfo) {
+        //   iFrameUrl.searchParams.append(key, this.donationinfo[key]);
+        // }
+        document.getElementById("dl-iframe").src =
+          iFrameUrl.toString().replace("/donate/1", "/donate/2") + "&chain";
         break;
       case "close":
         this.close(event);
