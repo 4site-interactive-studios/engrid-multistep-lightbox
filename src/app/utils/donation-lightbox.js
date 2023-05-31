@@ -405,9 +405,9 @@ export class DonationLightbox {
             ? ""
             : this.donationinfo.frequency;
         let iFrameUrl = new URL(document.getElementById("dl-iframe").src);
-        // for (const key in this.donationinfo) {
-        //   iFrameUrl.searchParams.append(key, this.donationinfo[key]);
-        // }
+        for (const key in this.donationinfo) {
+          iFrameUrl.searchParams.append(key, btoa(this.donationinfo[key]));
+        }
         document.getElementById("dl-iframe").src =
           iFrameUrl.toString().replace("/donate/1", "/donate/2") + "&chain";
         break;
