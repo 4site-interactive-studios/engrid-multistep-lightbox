@@ -19,6 +19,7 @@ export class DonationLightbox {
       form_color: "#2375c9",
       url: null,
       cookie_hours: 24,
+      view_more: false,
     };
     this.donationinfo = {};
     this.options = { ...this.defaultOptions };
@@ -90,6 +91,9 @@ export class DonationLightbox {
     }
     if ("form_color" in data) {
       this.options.form_color = data.form_color;
+    }
+    if ("view_more" in data) {
+      this.options.view_more = data.view_more === "true";
     }
   }
   init() {
@@ -164,14 +168,21 @@ export class DonationLightbox {
                 ? `<img class="dl-logo" src="${this.options.logo}" alt="${this.options.title}">`
                 : ""
             }
-            <a href="#" class="dl-close-viewmore" style="color: ${
-              this.options.bg_color
-            };">
+            ${
+              this.options.view_more
+                ? `
+            <a href="#" class="dl-close-viewmore" style="color: ${this.options.bg_color};">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 16 16">
                 <path fill="currentColor" d="M7.214.786c.434-.434 1.138-.434 1.572 0 .433.434.433 1.137 0 1.571L4.57 6.572h10.172c.694 0 1.257.563 1.257 1.257s-.563 1.257-1.257 1.257H4.229l4.557 4.557c.433.434.433 1.137 0 1.571-.434.434-1.138.434-1.572 0L0 8 7.214.786z"></path>
               </svg>
             </a>
-            <div class="dl-container">
+            `
+                : ""
+            }
+            
+            <div class="dl-container" data-view-more="${
+              this.options.view_more ? "true" : "false"
+            }">
               ${this.loadHero()}
               ${
                 this.options.divider
@@ -187,9 +198,13 @@ export class DonationLightbox {
                 <p class="dl-paragraph" style="color: ${
                   this.options.txt_color
                 }">${this.options.paragraph}</p>
-                <a class="dl-viewmore" href="#"style="color: ${
-                  this.options.txt_color
-                }; border-color: ${this.options.txt_color}">View More</a>
+                ${
+                  this.options.view_more
+                    ? `
+                        <a class="dl-viewmore" href="#"style="color: ${this.options.txt_color}; border-color: ${this.options.txt_color}">View More</a>
+                      `
+                    : ""
+                }
               </div>
               <div class="dl-celebration">
                 <div class="frame frame1">
@@ -224,13 +239,13 @@ export class DonationLightbox {
         </div>
       </div>
     `;
+    if (this.options.view_more) {
+      const additionalStylesElement = document.head.appendChild(
+        document.createElement("style")
+      );
 
-    const additionalStylesElement = document.head.appendChild(
-      document.createElement("style")
-    );
-
-    additionalStylesElement.innerHTML = `
-      p.dl-paragraph::after {
+      additionalStylesElement.innerHTML = `
+      [data-view-more="true"] p.dl-paragraph::after {
         position: absolute;
         bottom: 0;
         right: 0;
@@ -252,6 +267,7 @@ export class DonationLightbox {
         color: ${this.options.form_color}
       }
     `;
+    }
 
     let overlay = document.createElement("div");
     overlay.id = this.overlayID;
@@ -267,16 +283,20 @@ export class DonationLightbox {
     });
 
     const closeViewMore = overlay.querySelector(".dl-close-viewmore");
-    closeViewMore.addEventListener("click", (e) => {
-      e.preventDefault();
-      overlay.querySelector(".left").classList.remove("view-more");
-    });
+    if (closeViewMore) {
+      closeViewMore.addEventListener("click", (e) => {
+        e.preventDefault();
+        overlay.querySelector(".left").classList.remove("view-more");
+      });
+    }
 
     const viewmore = overlay.querySelector(".dl-viewmore");
-    viewmore.addEventListener("click", (e) => {
-      e.preventDefault();
-      overlay.querySelector(".left").classList.add("view-more");
-    });
+    if (viewmore) {
+      viewmore.addEventListener("click", (e) => {
+        e.preventDefault();
+        overlay.querySelector(".left").classList.add("view-more");
+      });
+    }
 
     const videoElement = overlay.querySelector("video");
     if (videoElement) {
@@ -400,14 +420,14 @@ export class DonationLightbox {
         document.querySelector(".dl-loading").classList.add("is-loaded");
         break;
       case "submitted":
-        this.donationinfo.frequency =
-          this.donationinfo.frequency == "no"
-            ? ""
-            : this.donationinfo.frequency;
-        let iFrameUrl = new URL(document.getElementById("dl-iframe").src);
-        for (const key in this.donationinfo) {
-          iFrameUrl.searchParams.append(key, btoa(this.donationinfo[key]));
-        }
+        // this.donationinfo.frequency =
+        //   this.donationinfo.frequency == "no"
+        //     ? ""
+        //     : this.donationinfo.frequency;
+        // let iFrameUrl = new URL(document.getElementById("dl-iframe").src);
+        // for (const key in this.donationinfo) {
+        //   iFrameUrl.searchParams.append(key, btoa(this.donationinfo[key]));
+        // }
         document.getElementById("dl-iframe").src =
           iFrameUrl.toString().replace("/donate/1", "/donate/2") + "&chain";
         break;

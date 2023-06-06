@@ -38,6 +38,7 @@ Every option can be set as a data attribute on the `a` tag, or as a JavaScript o
 - **footer** - Content of the footer.
 - **url** - URL of the donation page - use this option if you want the lightbox to automatically open when the page loads.
 - **cookie_hours** - Number of hours to not auto open the lightbox after the user closes it.
+- **view_more** - Whether or not to show the "View More" link to expand the text. Defaults to false.
 
 Because the page can have multiple lightbox links, you can share options between them by creating a `DonationLightboxOptions` object. Example:
 
