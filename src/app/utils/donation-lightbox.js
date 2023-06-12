@@ -245,19 +245,6 @@ export class DonationLightbox {
       );
 
       additionalStylesElement.innerHTML = `
-      [data-view-more="true"] p.dl-paragraph::after {
-        position: absolute;
-        bottom: 0;
-        right: 0;
-
-        background: rgb(205, 228, 252);
-        background: linear-gradient(360deg, ${this.options.bg_color}, rgba(205, 228, 252, 0));
-        content: "";
-        height: 60px;
-        transition: 0.3s transform ease-in-out;
-        width: 100%;
-      }
-
       .dl-container-inner::-webkit-scrollbar-thumb {
         background: ${this.options.form_color};
         border-radius: 10px;
