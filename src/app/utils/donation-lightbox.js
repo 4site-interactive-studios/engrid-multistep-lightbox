@@ -18,8 +18,13 @@ export class DonationLightbox {
       txt_color: "#FFFFFF",
       form_color: "#2375c9",
       url: null,
+      cookie_name: "HideDonationLightbox",
       cookie_hours: 24,
       view_more: false,
+      logo_position_left: "unset",
+      logo_position_top: "unset",
+      logo_position_bottom: "unset",
+      logo_position_right: "unset"      
     };
     this.donationinfo = {};
     this.options = { ...this.defaultOptions };
@@ -95,6 +100,24 @@ export class DonationLightbox {
     if ("view_more" in data) {
       this.options.view_more = data.view_more === "true";
     }
+    if ("logo_position_top" in data) {
+      this.options.logo_position_top = data.logo_position_top;
+    }
+    if ("logo_position_right" in data) {
+      this.options.logo_position_right = data.logo_position_right;
+    }
+    if ("logo_position_bottom" in data) {
+      this.options.logo_position_bottom = data.logo_position_bottom;
+    }
+    if ("logo_position_left" in data) {
+      this.options.logo_position_left = data.logo_position_left;
+    }
+    if ("cookie_name" in data) {
+      this.options.cookie_name = data.cookie_name;
+    }
+    if ("cookie_hours" in data) {
+      this.options.cookie_hours = data.cookie_hours;
+    }
   }
   init() {
     console.log("DonationLightbox: init");
@@ -144,6 +167,7 @@ export class DonationLightbox {
     }
     this.overlayID = "foursite-" + Math.random().toString(36).substring(7);
     href.searchParams.append("color", this.options.form_color);
+
     const markup = `
       <div class="foursiteDonationLightbox-mobile-container">
         <h1 class="foursiteDonationLightbox-mobile-title">${
@@ -159,13 +183,18 @@ export class DonationLightbox {
             ? `<img class="dl-mobile-logo" src="${this.options.logo}" alt="${this.options.title}">`
             : ""
         }
+
+        
+        
+        
+        
         <div class="dl-content">
           <div class="left" style="background-color: ${
             this.options.bg_color
           }; color: ${this.options.txt_color}">
             ${
               this.options.logo
-                ? `<img class="dl-logo" src="${this.options.logo}" alt="${this.options.title}">`
+                ? `<img class="dl-logo" src="${this.options.logo}" alt="${this.options.title}" style="top: ${this.options.logo_position_top}; right: ${this.options.logo_position_right}; bottom: ${this.options.logo_position_bottom}; left: ${this.options.logo_position_left};">`
                 : ""
             }
             ${
@@ -193,8 +222,8 @@ export class DonationLightbox {
                 this.options.bg_color
               }; color: ${this.options.txt_color}">
                 <h1 class="dl-title" style="color: ${this.options.txt_color}">${
-      this.options.title
-    }</h1>
+                  this.options.title
+                }</h1>
                 <p class="dl-paragraph" style="color: ${
                   this.options.txt_color
                 }">${this.options.paragraph}</p>
@@ -208,15 +237,8 @@ export class DonationLightbox {
               </div>
               <div class="dl-celebration">
                 <div class="frame frame1">
-                    <h3>and the animals</h3>
-                    <h2>THANK YOU!</h2>
-                </div>
-                <div class="frame frame2">
-                  <div id="bunnyAnimation"></div>
-                </div>
-                <div class="frame frame3">
-                  <h2 class="name">Friend,</h2>
-                  <h2 class="phrase">you are a hero <br>to animals.</h2>
+                  <h3>THANK YOU,</h3>
+                  <h2 class="name">Friend!</h2>
                 </div>
               </div>
             </div>
@@ -235,7 +257,7 @@ export class DonationLightbox {
           </div>
         </div>
         <div class="dl-footer">
-          <p>${this.options.footer}</p>
+          ${this.options.footer.includes('<p>') ? this.options.footer : `<p>${this.options.footer}</p>`}
         </div>
       </div>
     `;
@@ -344,6 +366,7 @@ export class DonationLightbox {
     this.sendGAEvent(category, action, label);
     this.overlay.classList.remove("is-hidden");
     document.body.classList.add("has-DonationLightbox");
+    this.setCookie(this.options.cookie_hours);
   }
 
   close(e) {
@@ -357,9 +380,6 @@ export class DonationLightbox {
     document.body.classList.remove("has-DonationLightbox");
     if (videoElement) {
       videoElement.pause();
-    }
-    if (this.options.url) {
-      this.setCookie(this.options.cookie_hours);
     }
   }
   // Receive a message from the child iframe
@@ -506,125 +526,78 @@ export class DonationLightbox {
       );
     }, 250);
   }
-  celebrate(animate = true) {
-    const videoElement = this.overlay.querySelector("video");
-    if (videoElement) {
-      videoElement.pause();
-    }
-    const leftContainer = document.querySelector(
+  celebrate() {
+    const duration = 5 * 1000;
+    const animationEnd = Date.now() + duration;
+    const defaults = {
+      startVelocity: 30,
+      spread: 360,
+      ticks: 60,
+      zIndex: 100000,
+      useWorker: false,
+    };
+
+    const randomInRange = (min, max) => {
+      return Math.random() * (max - min) + min;
+    };
+
+    const interval = setInterval(function () {
+      const timeLeft = animationEnd - Date.now();
+
+      if (timeLeft <= 0) {
+        return clearInterval(interval);
+      }
+
+      const particleCount = 50 * (timeLeft / duration);
+      // since particles fall down, start a bit higher than random
+      confetti(
+        Object.assign({}, defaults, {
+          particleCount,
+          origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
+        })
+      );
+      confetti(
+        Object.assign({}, defaults, {
+          particleCount,
+          origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
+        })
+      );
+    }, 250);
+    // Left Animation
+    const leftContainer = this.overlay.querySelector(
       `#${this.overlayID} .dl-content .left`
     );
-    const newLogo =
-      'data:image/svg+xml;utf8,<svg width="146" height="146" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M73 146c40.317 0 73-32.683 73-73S113.317 0 73 0 0 32.683 0 73s32.683 73 73 73z" fill="%23fff"/><path d="M36.942 53.147H25.828L14.49 95.107h9.391l4.553-16.321-.502 2.15c6.335.55 20.226.661 22.235-14.668 2.003-14.83-13.225-13.121-13.225-13.121zm1.056 17.533c-3.168 2.978-7.725 1.93-7.725 1.93l1.278-4.686 1.722-6.232c.667-.055 5.224-.551 6.503.498 1.39 1.103.39 6.451-1.78 8.492l.002-.002zM78.513 56.345a6.223 6.223 0 0 0-3.169-2.537c-8.057-2.595-14.671 3.529-19.284 9.428a37.298 37.298 0 0 0-7.558 21.394c.222 4.577 1.334 9.704 6.058 11.524 7.724 1.93 13.394-4.577 17.56-9.98.444-.771 1.222-1.433 1.222-2.316-.333-.165-.612-.44-1.005-.44a29.047 29.047 0 0 1-2.89 3.693c-2.666 2.592-6.057 4.632-9.948 3.75-4.279-1.93-4.446-6.893-4.056-11.193.193-1.652.566-3.28 1.112-4.852l2.889-.828c6.39-2.095 13.944-2.536 18.228-8.932 1.445-2.427 2.612-6.065.835-8.713l.006.002zM64.286 70.46c-8.725 2.812-6.558 1.654-6.558 1.654s6.668-19.74 13.448-17.425c6.892 2.316 1.885 12.963-6.892 15.77h.002zM83.46 53.312l27.899-.165-2.445 9.042-9.114.166-9.282 32.752H80.29L89.24 62.3h-8.392l2.613-8.988zM119.471 53.256l-20.34 41.796h10.504l3.224-6.892h9.448v6.837l9.226-.055V53.147l-12.06.11h-.002zm-2.834 26.631 5.558-11.965.055-.165v12.13h-5.613z" fill="%23FEBA4B"/></svg>';
-    const logo = leftContainer.querySelector(".dl-logo");
-    if (!animate) {
+    if (leftContainer) {
       leftContainer.classList.add("celebrating");
-      if (logo) {
-        logo.src = newLogo;
-        logo.style.maxWidth = "98px";
-        logo.style.transform = "translateX(-50%)";
-        logo.style.left = "50%";
-        logo.style.top = "20px";
-      }
-      const frame1 = leftContainer.querySelector(".frame1");
-      frame1.style.bottom = "360px";
-      const celebratingDiv = document.querySelector(".dl-celebration");
-      celebratingDiv.style.backgroundImage = `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="46" height="38" fill="none" viewBox="0 0 46 38"><path fill="%23C92533" d="M33.707 0C29.268 0 25.174 2.166 23 5.664 20.826 2.166 16.732 0 12.293 0 5.504 0 0 5.693 0 11.83 0 27.245 23 38 23 38s23-10.755 23-26.17C46 5.693 40.496 0 33.707 0z"/></svg>')`;
-      celebratingDiv.style.backgroundSize = "80%";
-      celebratingDiv.style.backgroundPosition = "center 215px";
-      celebratingDiv.style.backgroundRepeat = "no-repeat";
-
-      return;
-    }
-    if (this.isMobile()) {
-      this.startConfetti();
-      return;
-    }
-
-    // Left Animation
-    leftContainer.classList.add("celebrating");
-    if (logo) {
-      logo.src = newLogo;
-    }
-    this.loadScript(
-      "https://cdnjs.cloudflare.com/ajax/libs/gsap/3.2.0/gsap.min.js",
-      () => {
-        const tl = gsap.timeline({
-          onComplete: this.startBunny(),
-        });
-        if (logo) {
-          tl.to(".dl-logo", {
-            duration: 1,
-            x: "50%",
-            right: "50%",
-            top: "155px",
-            maxWidth: "145px",
-            ease: "power1.inOut",
-          });
+      const logo = leftContainer.querySelector(".dl-logo");
+      this.loadScript(
+        "https://cdnjs.cloudflare.com/ajax/libs/gsap/3.2.0/gsap.min.js",
+        () => {
+          const tl = gsap.timeline();
+          if (logo) {
+            tl.to(logo, {
+              duration: 1,
+              x: "-50%",
+              left: "50%",
+              top: "155px",
+              maxWidth: "185px",
+              scale: 1.5,
+              ease: "power1.inOut",
+            });
+          }
+          tl.to(
+            ".frame1",
+            {
+              bottom: "200px",
+              duration: 1,
+              ease: "power1.inOut",
+            },
+            ">-1"
+          );
         }
-        tl.to(
-          ".frame1",
-          {
-            bottom: "150px",
-            duration: 1,
-            ease: "power1.inOut",
-          },
-          ">-1"
-        );
-        if (logo) {
-          tl.to(".dl-logo", {
-            duration: 1,
-            delay: 1,
-            top: "20px",
-            maxWidth: "98px",
-            ease: "power1.inOut",
-          });
-        }
-        tl.to(
-          ".frame1",
-          {
-            bottom: "360px",
-            duration: 1,
-            ease: "power1.inOut",
-          },
-          ">-1"
-        );
-      }
-    );
+      );
+    }
   }
-  startBunny() {
-    this.loadScript(
-      "https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.7.14/lottie.min.js",
-      () => {
-        const tl2 = gsap.timeline();
-        tl2.to(".frame2", {
-          opacity: "1",
-          duration: 1,
-          ease: "power1.inOut",
-        });
-        tl2.add(() => {
-          const anim = bodymovin.loadAnimation({
-            container: document.querySelector("#bunnyAnimation"),
-            renderer: "svg",
-            loop: false,
-            autoplay: true,
-            path: "https://000665513.codepen.website/data.json",
-          });
-          anim.addEventListener("complete", () => {
-            if (this.animationCount > 3) {
-              anim.goToAndPlay(130, true);
-              this.animationCount++;
-            } else {
-              this.startConfetti();
-            }
-          });
-        }, "+=0.5");
-        // Make the text grow
-        tl2.fromTo(".frame3", 1, { scale: 0 }, { scale: 1 }, "+=6");
-      }
-    );
-  }
-
   shake() {
     const element = document.querySelector(".dl-content");
     if (element) {
@@ -638,7 +611,7 @@ export class DonationLightbox {
   setCookie(hours = 24, path = "/") {
     const expires = new Date(Date.now() + hours * 36e5).toUTCString();
     document.cookie =
-      "HideDonationLightbox" +
+      this.options.cookie_name +
       "=" +
       encodeURIComponent(true) +
       "; expires=" +
@@ -650,14 +623,14 @@ export class DonationLightbox {
   getCookie() {
     return document.cookie.split("; ").reduce((r, v) => {
       const parts = v.split("=");
-      return parts[0] === "HideDonationLightbox"
+      return parts[0] === this.options.cookie_name
         ? decodeURIComponent(parts[1])
         : r;
     }, "");
   }
 
   deleteCookie(path = "/") {
-    setCookie("HideDonationLightbox", "", -1, path);
+    setCookie(this.options.cookie_name, "", -1, path);
   }
   loadScript(url, callback) {
     const script = document.createElement("script");
