@@ -251,6 +251,9 @@ body.has-DonationLightbox {
             }
           }
           &[data-view-more="true"] {
+            .dl-container-inner {
+              padding-right: 100px;
+            }
             &:hover {
               .dl-divider {
                 transform: translateY(calc(-100% - 29px));
