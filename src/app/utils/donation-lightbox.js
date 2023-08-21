@@ -17,6 +17,8 @@ export class DonationLightbox {
       bg_color: "#254d68",
       txt_color: "#FFFFFF",
       form_color: "#2375c9",
+      celebrate_txt_color: "#feba4b",
+      celebrate_bg_color: "#000000",
       url: null,
       cookie_name: "HideDonationLightbox",
       cookie_hours: 24,
@@ -93,6 +95,12 @@ export class DonationLightbox {
     }
     if ("txt_color" in data) {
       this.options.txt_color = data.txt_color;
+    }
+    if ("celebrate_bg_color" in data) {
+      this.options.celebrate_bg_color = data.celebrate_bg_color;
+    }
+    if ("celebrate_txt_color" in data) {
+      this.options.celebrate_txt_color = data.celebrate_txt_color;
     }
     if ("form_color" in data) {
       this.options.form_color = data.form_color;
@@ -235,7 +243,7 @@ export class DonationLightbox {
                     : ""
                 }
               </div>
-              <div class="dl-celebration">
+              <div class="dl-celebration" style="background-color: ${this.options.celebrate_bg_color}; color: ${this.options.celebrate_txt_color};">
                 <div class="frame frame1">
                   <h3>THANK YOU,</h3>
                   <h2 class="name">Friend!</h2>
@@ -410,7 +418,7 @@ export class DonationLightbox {
         const firstname = message.value;
         const nameHeading = document.querySelector(".dl-celebration h2.name");
         if (nameHeading) {
-          nameHeading.innerHTML = firstname + ",";
+          nameHeading.innerHTML = firstname + "!";
           if (firstname.length > 12) {
             nameHeading.classList.add("big-name");
           }
