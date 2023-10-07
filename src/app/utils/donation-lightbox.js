@@ -22,7 +22,7 @@ export class DonationLightbox {
       url: null,
       cookie_name: "HideDonationLightbox",
       cookie_hours: 24,
-      view_more: false,
+      view_more: true,
       logo_position_left: "unset",
       logo_position_top: "unset",
       logo_position_bottom: "unset",

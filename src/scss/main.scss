@@ -332,6 +332,7 @@ body.has-DonationLightbox {
             overflow: hidden;
             text-overflow: ellipsis;
             max-width: 90%;
+            max-height: 150px;
           }
           .dl-viewmore {
             font-family: $content-font;
