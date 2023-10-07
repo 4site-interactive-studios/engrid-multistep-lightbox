@@ -1,7 +1,7 @@
 import "./confetti";
 export class DonationLightbox {
   constructor() {
-    console.log("DonationLightbox: constructor");
+    if (this.isDebug()) console.log("DonationLightbox: constructor");
     window.dataLayer = window.dataLayer || [];
     this.defaultOptions = {
       name: "4Site Multi-Step Splash",
@@ -26,7 +26,7 @@ export class DonationLightbox {
       logo_position_left: "unset",
       logo_position_top: "unset",
       logo_position_bottom: "unset",
-      logo_position_right: "unset"      
+      logo_position_right: "unset",
     };
     this.donationinfo = {};
     this.options = { ...this.defaultOptions };
@@ -49,7 +49,8 @@ export class DonationLightbox {
     }
     // Get Data Attributes
     let data = element.dataset;
-    console.log("DonationLightbox: loadOptions: data: ", data);
+    if (this.isDebug())
+      console.log("DonationLightbox: loadOptions: data: ", data);
     // Set Options
     if ("name" in data) {
       this.options.name = data.name;
@@ -128,14 +129,15 @@ export class DonationLightbox {
     }
   }
   init() {
-    console.log("DonationLightbox: init");
+    if (this.isDebug()) console.log("DonationLightbox: init");
     document.querySelectorAll("[data-donation-lightbox]").forEach((e) => {
       e.addEventListener(
         "click",
         (event) => {
           // Get clicked element
           let element = event.target;
-          console.log("DonationLightbox: init: clicked element: " + element);
+          if (this.isDebug())
+            console.log("DonationLightbox: init: clicked element: " + element);
           this.build(event);
         },
         false
@@ -151,7 +153,7 @@ export class DonationLightbox {
     }
   }
   build(event) {
-    console.log("DonationLightbox: build", typeof event);
+    if (this.isDebug()) console.log("DonationLightbox: build", typeof event);
     let href = null;
     if (typeof event === "object") {
       // Get clicked element
@@ -208,7 +210,7 @@ export class DonationLightbox {
             ${
               this.options.view_more
                 ? `
-            <a href="#" class="dl-close-viewmore" style="color: ${this.options.bg_color};">
+            <a href="#" class="dl-close-viewmore" style="color: ${this.options.txt_color};">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 16 16">
                 <path fill="currentColor" d="M7.214.786c.434-.434 1.138-.434 1.572 0 .433.434.433 1.137 0 1.571L4.57 6.572h10.172c.694 0 1.257.563 1.257 1.257s-.563 1.257-1.257 1.257H4.229l4.557 4.557c.433.434.433 1.137 0 1.571-.434.434-1.138.434-1.572 0L0 8 7.214.786z"></path>
               </svg>
@@ -220,30 +222,32 @@ export class DonationLightbox {
             <div class="dl-container" data-view-more="${
               this.options.view_more ? "true" : "false"
             }">
-              ${this.loadHero()}
-              ${
-                this.options.divider
-                  ? `<img class="dl-divider" src="${this.options.divider}" alt="Divider">`
-                  : ""
-              }
               <div class="dl-container-inner" style="background-color: ${
                 this.options.bg_color
               }; color: ${this.options.txt_color}">
                 <h1 class="dl-title" style="color: ${this.options.txt_color}">${
-                  this.options.title
-                }</h1>
+      this.options.title
+    }</h1>
                 <p class="dl-paragraph" style="color: ${
                   this.options.txt_color
                 }">${this.options.paragraph}</p>
                 ${
                   this.options.view_more
                     ? `
-                        <a class="dl-viewmore" href="#"style="color: ${this.options.txt_color}; border-color: ${this.options.txt_color}">View More</a>
+                        <a class="dl-viewmore" href="#"style="color: ${this.options.txt_color}; border-color: ${this.options.txt_color}">Read More</a>
                       `
                     : ""
                 }
               </div>
-              <div class="dl-celebration" style="background-color: ${this.options.celebrate_bg_color}; color: ${this.options.celebrate_txt_color};">
+              ${
+                this.options.divider
+                  ? `<img class="dl-divider" src="${this.options.divider}" alt="Divider">`
+                  : ""
+              }
+              ${this.loadHero()}
+              <div class="dl-celebration" style="background-color: ${
+                this.options.celebrate_bg_color
+              }; color: ${this.options.celebrate_txt_color};">
                 <div class="frame frame1">
                   <h3>THANK YOU,</h3>
                   <h2 class="name">Friend!</h2>
@@ -265,7 +269,11 @@ export class DonationLightbox {
           </div>
         </div>
         <div class="dl-footer">
-          ${this.options.footer.includes('<p>') ? this.options.footer : `<p>${this.options.footer}</p>`}
+          ${
+            this.options.footer.includes("<p>")
+              ? this.options.footer
+              : `<p>${this.options.footer}</p>`
+          }
         </div>
       </div>
     `;
@@ -276,12 +284,21 @@ export class DonationLightbox {
 
       additionalStylesElement.innerHTML = `
       .dl-container-inner::-webkit-scrollbar-thumb {
-        background: ${this.options.form_color};
+        background: ${this.options.txt_color};
         border-radius: 10px;
       }
 
       .dl-container.playing .btn-pause:hover {
-        color: ${this.options.form_color}
+        color: ${this.options.txt_color}
+      }
+      .dl-container[data-view-more=true] .dl-paragraph::after{
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 100px;
+        background: linear-gradient(transparent 15px, ${this.options.bg_color});
       }
     `;
     }
@@ -374,7 +391,9 @@ export class DonationLightbox {
     this.sendGAEvent(category, action, label);
     this.overlay.classList.remove("is-hidden");
     document.body.classList.add("has-DonationLightbox");
-    this.setCookie(this.options.cookie_hours);
+    if (!this.isDebug()) {
+      this.setCookie(this.options.cookie_hours);
+    }
   }
 
   close(e) {
@@ -392,7 +411,8 @@ export class DonationLightbox {
   }
   // Receive a message from the child iframe
   receiveMessage(event) {
-    console.log("DonationLightbox: receiveMessage: event: ", event);
+    if (this.isDebug())
+      console.log("DonationLightbox: receiveMessage: event: ", event);
     const message = event.data;
 
     switch (message.key) {
@@ -409,10 +429,11 @@ export class DonationLightbox {
         break;
       case "donationinfo":
         this.donationinfo = JSON.parse(message.value);
-        console.log(
-          "DonationLightbox: receiveMessage: donationinfo: ",
-          this.donationinfo
-        );
+        if (this.isDebug())
+          console.log(
+            "DonationLightbox: receiveMessage: donationinfo: ",
+            this.donationinfo
+          );
         break;
       case "firstname":
         const firstname = message.value;
@@ -471,7 +492,7 @@ export class DonationLightbox {
   }
   error(error, event) {
     this.shake();
-    // console.error(error);
+    if (this.isDebug()) console.error(error);
     const container = document.querySelector(
       ".foursiteDonationLightbox .right"
     );
@@ -694,5 +715,8 @@ export class DonationLightbox {
         : ""
     }
     </div>`;
+  }
+  isDebug() {
+    return window.location.href.includes("debug");
   }
 }
