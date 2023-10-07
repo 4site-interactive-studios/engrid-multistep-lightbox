@@ -433,6 +433,7 @@ body.has-DonationLightbox {
             line-clamp: initial !important;
             -webkit-line-clamp: initial !important;
             max-width: 100% !important;
+            overflow: visible !important;
             &::after {
               content: none !important;
             }
