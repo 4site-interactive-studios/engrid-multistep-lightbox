@@ -96,15 +96,15 @@ body.has-DonationLightbox {
   .dl-close-viewmore {
     position: absolute;
     box-sizing: content-box;
-    right: 4px;
-    top: 10px;
-    width: 25px;
-    height: 25px;
-    z-index: 1000;
-    padding: 5px;
-    border-radius: 4px;
+    //right: 4px;
+    //top: 10px;
+    //width: 25px;
+    //height: 25px;
+    //z-index: 1000;
+    //padding: 5px;
+    //border-radius: 4px;
     color: #074e92;
-    background-color: rgba(255, 255, 255, 0.7);
+    //background-color: rgba(255, 255, 255, 0.7);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -113,6 +113,15 @@ body.has-DonationLightbox {
     svg {
       transform: rotate(270deg);
     }
+    border-bottom: 1px solid;
+    padding-bottom: 5px;
+    font-weight: 500;
+    text-decoration: none;
+    font-size: 14px;
+    right: 20px;
+    top: 20px;
+    // set z-index higher than logo so that it can be clicked regardless of logo position
+    z-index: 3001;
   }
   .foursiteDonationLightbox-container {
     border-radius: 5px;
@@ -154,7 +163,8 @@ body.has-DonationLightbox {
           position: relative;
           transition: 0.3s transform ease-in-out;
           overflow: hidden;
-          min-height: 250px;
+          min-height: 277px;
+          max-height: 277px;
           object-fit: cover;
           clip-path: ellipse(125% 99% at 50% 100%);
           video {
