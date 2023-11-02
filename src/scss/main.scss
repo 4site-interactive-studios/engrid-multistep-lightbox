@@ -589,6 +589,7 @@ body.has-DonationLightbox {
         right: -20px;
         max-width: 192px;
         z-index: 3000;
+        transform: unset !important;
         @include mq(desktop) {
           display: block;
         }
