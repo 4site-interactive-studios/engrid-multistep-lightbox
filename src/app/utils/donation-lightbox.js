@@ -406,6 +406,10 @@ export class DonationLightbox {
     if (videoElement) {
       videoElement.pause();
     }
+
+    // notify listeners that the lightbox has been closed
+    const event = new CustomEvent("lightbox-closed", {});
+    document.dispatchEvent(event);
   }
   // Receive a message from the child iframe
   receiveMessage(event) {
