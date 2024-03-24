@@ -1,7 +1,7 @@
 import "./confetti";
 export class DonationLightbox {
   constructor() {
-    console.log("DonationLightbox: constructor");
+    //console.log("DonationLightbox: constructor");
     window.dataLayer = window.dataLayer || [];
     this.defaultOptions = {
       name: "4Site Multi-Step Splash",
@@ -42,7 +42,7 @@ export class DonationLightbox {
     }
     // Get Data Attributes
     let data = element.dataset;
-    console.log("DonationLightbox: loadOptions: data: ", data);
+    //console.log("DonationLightbox: loadOptions: data: ", data);
     // Set Options
     if ("name" in data) {
       this.options.name = data.name;
@@ -97,14 +97,14 @@ export class DonationLightbox {
     }
   }
   init() {
-    console.log("DonationLightbox: init");
+    //console.log("DonationLightbox: init");
     document.querySelectorAll("[data-donation-lightbox]").forEach((e) => {
       e.addEventListener(
         "click",
         (event) => {
           // Get clicked element
           let element = event.target;
-          console.log("DonationLightbox: init: clicked element: " + element);
+          //console.log("DonationLightbox: init: clicked element: " + element);
           this.build(event);
         },
         false
@@ -120,7 +120,7 @@ export class DonationLightbox {
     }
   }
   build(event) {
-    console.log("DonationLightbox: build", typeof event);
+    //console.log("DonationLightbox: build", typeof event);
     let href = null;
     if (typeof event === "object") {
       // Get clicked element
@@ -364,7 +364,7 @@ export class DonationLightbox {
   }
   // Receive a message from the child iframe
   receiveMessage(event) {
-    console.log("DonationLightbox: receiveMessage: event: ", event);
+    //console.log("DonationLightbox: receiveMessage: event: ", event);
     const message = event.data;
 
     switch (message.key) {
@@ -381,10 +381,7 @@ export class DonationLightbox {
         break;
       case "donationinfo":
         this.donationinfo = JSON.parse(message.value);
-        console.log(
-          "DonationLightbox: receiveMessage: donationinfo: ",
-          this.donationinfo
-        );
+        //console.log("DonationLightbox: receiveMessage: donationinfo: ", this.donationinfo);
         break;
       case "firstname":
         const firstname = message.value;

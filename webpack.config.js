@@ -8,6 +8,7 @@ const isProduction = process.env.NODE_ENV == "production";
 const stylesHandler = "style-loader";
 
 const config = {
+  devtool: "source-map",
   entry: "./src/index.js",
   output: {
     filename: "donation-lightbox-parent.js",
